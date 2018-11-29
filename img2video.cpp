@@ -14,7 +14,7 @@ using namespace std;
 
 static void help(char** argv)
 {
-    cout << "\nThis sample shows you how to read a sequence of images using the VideoCapture interface.\n"
+    cout << "This sample shows you how to read a sequence of images using the VideoCapture interface.\n"
          << "Usage: " << argv[0] << " <image_mask> (example mask: example_%02d.jpg) <video_name> (example: video.avi) <video_fps> (example: 25.0)\n"
          << "Image mask defines the name variation for the input images that have to be read as a sequence. \n"
          << "Using the mask example_%02d.jpg will read in images labeled as 'example_00.jpg', 'example_01.jpg', etc."
@@ -30,15 +30,16 @@ int main(int argc, char** argv)
 
     if(first_file.empty())
     {
-        return 1;
+        cout << "The input is not a image sequence, try open a camera device!\n" << endl;
+        first_file = argv[1];
     }
 
     VideoCapture sequence(first_file);
 
     if (!sequence.isOpened())
     {
-        cerr << "Failed to open the image sequence!\n" << endl;
-        return 1;
+        cerr << "Failed to open the image sequence or a camera device!\n" << endl;
+        return false;
     }
 
     Mat src;
