@@ -1,3 +1,0 @@
-/home/lbx/lxj/my_git/image2video-by-OpenCV/build/CMakeFiles/rebuild_cache.dir
-/home/lbx/lxj/my_git/image2video-by-OpenCV/build/CMakeFiles/edit_cache.dir
-/home/lbx/lxj/my_git/image2video-by-OpenCV/build/CMakeFiles/img2video.dir
