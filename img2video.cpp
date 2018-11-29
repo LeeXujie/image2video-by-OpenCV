@@ -7,7 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <stdio.h> 
 
 using namespace cv;
 using namespace std;
@@ -25,20 +25,22 @@ int main(int argc, char** argv)
 {
     if(argc<4){ help(argv); return false; }
 
-    cv::CommandLineParser parser(argc, argv, "{@image| ../data/left%02d.jpg |}");
+    cv::CommandLineParser parser(argc, argv, "{@image| ../data/image-%02d.jpg |}");
     string first_file = parser.get<string>("@image");
 
-    if(first_file.empty())
+    VideoCapture sequence;
+
+    if(first_file.size() < 3)
     {
-        cout << "The input is not a image sequence, try open a camera device!\n" << endl;
-        first_file = argv[1];
+        cout << "The input may not be a image sequence, try open a camera device!\n" << endl;
+        sequence.open(atoi(argv[1]));
     }
 
-    VideoCapture sequence(first_file);
+    else sequence.open(first_file);
 
     if (!sequence.isOpened())
     {
-        cerr << "Failed to open the image sequence or a camera device!\n" << endl;
+        cerr << "Failed to open the image sequence or a camera device of " << argv[1] << endl;
         return false;
     }
 
@@ -49,7 +51,7 @@ int main(int argc, char** argv)
     // check if we succeeded
     if (src.empty()) {
         cerr << "ERROR! blank frame grabbed\n";
-        return -1;
+        return false;
     }
     bool isColor = (src.type() == CV_8UC3);
 
@@ -62,25 +64,27 @@ int main(int argc, char** argv)
     writer.open(filename, codec, fps, src.size(), isColor);
     // check if we succeeded
     if (!writer.isOpened()) {
-        cerr << "Could not open the output video file for write\n";
-        return -1;
+        cerr << "Could not open the output video file for write!" << endl;
+        return false;
     }
 
     //--- GRAB AND WRITE LOOP
+    char cvKey;
     cout << "Writing videofile: " << filename << endl;
-    for (;;)
+    while (cvKey != 27)
     {
         // check if we succeeded
         if (!sequence.read(src)) {
-            cerr << "End of Sequence\n";
+            cerr << "End of Sequence!" << endl;
             break;
         }
         // encode the frame into the videofile stream
         writer.write(src);
         // show live and wait for a key with timeout long enough to show images
         imshow("Image sequence | press ESC to close", src);
-        if (waitKey(10) >= 0)break;
+        cvKey = waitKey(10);
     }
+    cout << "The video has been saved as " << filename << endl;
     // the videofile will be closed and released automatically in VideoWriter destructor
     return 0;
 }
